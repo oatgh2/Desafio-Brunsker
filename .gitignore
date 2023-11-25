@@ -1,0 +1,10 @@
+﻿################################################################################
+# Este arquivo .gitignore foi criado automaticamente pelo Microsoft(R) Visual Studio.
+################################################################################
+
+/Aplicacao/LocadoraImoveisFront/LocadoraImoveis
+/Aplicacao/LocadoraImoveis/LocadoraImoveis/obj
+/Aplicacao/LocadoraImoveis/APIServices/obj
+/Aplicacao/LocadoraImoveis/LocadoraImoveisModels/bin/Debug/net6.0
+/Aplicacao/LocadoraImoveis/LocadoraImoveisModels/obj
+/Aplicacao/LocadoraImoveis/.vs/LocadoraImoveis
