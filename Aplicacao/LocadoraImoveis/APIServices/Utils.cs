@@ -9,6 +9,7 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using LocadoraImoveisModels.Models;
 using LocadoraImoveisModels.Models.DataBase;
+using System.ComponentModel;
 
 namespace APIServices
 {
@@ -63,6 +64,8 @@ namespace APIServices
     {
       return sByte > 0;
     }
+
+    
 
     public static LoggedUser GetLoggedUser(this User user, string token)
     {

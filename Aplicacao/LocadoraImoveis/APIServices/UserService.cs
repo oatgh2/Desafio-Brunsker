@@ -1,7 +1,9 @@
 ﻿using LocadoraImoveisModels.Models;
 using LocadoraImoveisModels.Models.DataBase;
+using LocadoraImoveisModels.Models.Exceptions;
 using LocadoraImoveisModels.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIServices
 {
@@ -11,10 +13,10 @@ namespace APIServices
     {
       string passwordHash = user.Password!.GetPasswordHash();
       User? loggingUser = Database.User.Where(x => x.UserCpf.Equals(user) && x.UserPasswordHash.Equals(user)).FirstOrDefault();
-      
-      if(loggingUser != null)
+
+      if (loggingUser != null)
       {
-        LoggedUser loggedUser =  loggingUser!.GetLoggedUser("");
+        LoggedUser loggedUser = loggingUser!.GetLoggedUser("");
         loggedUser.TokenJwt = Jwt.GetKey(loggedUser);
         return loggedUser;
       }
@@ -30,17 +32,38 @@ namespace APIServices
       return user;
     }
 
-    public User? GetUser(int idUser)
+    public ResultUser? GetUser(int idUser)
     {
-      User? result = Database.User.Where(x => x.Iduser == idUser).FirstOrDefault();
+      ResultUser? result = Database.User.Where(x => x.Iduser == idUser).Select(x => new ResultUser()
+      {
+        Id = x.Iduser,
+        Cpf = x.UserCpf,
+        IsAdm = x.AdminUser > 0,
+        Name = x.UserName
+      }).FirstOrDefault();
       return result;
     }
 
-
-    public List<User> GetUsers()
+    public List<ResultUser> GetUsers()
     {
-      List<User> result = Database.User.ToList();
+      List<ResultUser> result = Database.User.Select(x => new ResultUser()
+      {
+        Id = x.Iduser,
+        Cpf = x.UserCpf,
+        IsAdm = x.AdminUser > 0,
+        Name = x.UserName
+      }).ToList();
       return result;
+    }
+
+    public void ValidateUserRegistration(RegisterUser user)
+    {
+      List<ValidationResult> errors = new List<ValidationResult>();
+      bool duplicatedCpf = Database.User.Where(x => x.UserCpf.Equals(user.Cpf)).Count() > 0;
+      if (duplicatedCpf) { errors.Add(new ValidationResult("CPF já cadastrado", new[] { nameof(user.Cpf) })); }
+
+      if (errors.Count > 0)
+        throw new ValidationErroException(errors);
     }
   }
 }

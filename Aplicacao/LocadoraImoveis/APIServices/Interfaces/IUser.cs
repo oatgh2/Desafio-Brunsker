@@ -9,9 +9,9 @@ namespace LocadoraImoveisModels.Models.Interfaces
 {
   public interface IUserService
   {
-    public User? GetUser(int idUser);
-    public List<User> GetUsers();
-    public User CreateUser(RegisterUser user);
+    public ResultUser? GetUser(int idUser);
+    public List<ResultUser> GetUsers();
+    public ResultUser CreateUser(RegisterUser user);
     public LoggedUser? AuthenticateUser(LoginUser user);
   }
 }

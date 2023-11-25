@@ -22,13 +22,14 @@ namespace LocadoraImoveisModels.Models
     }
 
     [Required(ErrorMessage = "Campo Obrigatorio")]
-    [StringLength(256, ErrorMessage ="Máximo de 256 caracteres")]
+    [StringLength(256, ErrorMessage = "Máximo de 256 caracteres")]
     public string? Name { get; set; }
     [Required(ErrorMessage = "Campo Obrigatorio")]
     [StringLength(32, ErrorMessage = "Máximo de 32 caracteres")]
     public string? Password { get; set; }
     [Required(ErrorMessage = "Campo Obrigatorio")]
-    [StringLength(11, ErrorMessage = "Máximo de 32 caracteres")]
+    [StringLength(11, ErrorMessage = "Máximo de 11 caracteres")]
+    [MinLength(11, ErrorMessage = "Minimo de 11 caracteres")]
     public string? Cpf { get; set; }
 
     public User GetDatabaseUser()
