@@ -1,4 +1,5 @@
 ﻿using LocadoraImoveisModels.Models.DataBase;
+using LocadoraImoveisModels.Models.ViaCep;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,41 @@ namespace LocadoraImoveisModels.Models
       return sByte > 0;
     }
 
+    public static Properties GetProperty(this RegisterProperty registerProperty, ResultAddress address)
+    {
+      Properties properties = new Properties()
+      {
+        Cep = registerProperty.CEP,
+        Name = registerProperty.Name,
+        Numero = Convert.ToInt32(registerProperty.Numero),
+        Bairro = address.bairro,
+        Cidade = address.localidade,
+        Estado = address.uf,
+        IsRented = 0,
+      };
+
+      return properties;
+    }
+    public static Properties GetProperty(this UpdateProperty registerProperty, ResultAddress address)
+    {
+      Properties properties = new Properties()
+      {
+        Cep = registerProperty.CEP,
+        Name = registerProperty.Name,
+        Numero = Convert.ToInt32(registerProperty.Numero),
+        Bairro = address.bairro,
+        Cidade = address.localidade,
+        Estado = address.uf,
+        IsRented = 0,
+      };
+
+      return properties;
+    }
+
     public static ResultProperty GetResultProperty(this Properties properties)
     {
       UserProperty? rentProperty = null;
-      if(properties.IdUserNavigation != null)
+      if (properties.IdUserNavigation != null)
         rentProperty = new UserProperty(properties.IdUserNavigation.Iduser, properties.IdUserNavigation.UserName);
 
       ResultProperty resultUser = new ResultProperty(properties.Idproperties, properties.Name, properties.Bairro,
