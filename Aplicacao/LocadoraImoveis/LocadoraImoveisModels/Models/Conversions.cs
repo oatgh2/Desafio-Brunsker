@@ -14,6 +14,18 @@ namespace LocadoraImoveisModels.Models
       return sByte > 0;
     }
 
+    public static ResultProperty GetResultProperty(this Properties properties)
+    {
+      UserProperty? rentProperty = null;
+      if(properties.IdUserNavigation != null)
+        rentProperty = new UserProperty(properties.IdUserNavigation.Iduser, properties.IdUserNavigation.UserName);
+
+      ResultProperty resultUser = new ResultProperty(properties.Idproperties, properties.Name, properties.Bairro,
+        properties.Cidade, properties.Numero.ToString(), properties.Estado, properties.Cep, properties.IsRented.ToBoolean(), rentProperty
+        );
+      return resultUser;
+    }
+
     public static ResultUser GetResultUser(this User user)
     {
       ResultUser resultUser = new ResultUser(user.Iduser, user.UserName, user.UserCpf, user.AdminUser.ToBoolean());
