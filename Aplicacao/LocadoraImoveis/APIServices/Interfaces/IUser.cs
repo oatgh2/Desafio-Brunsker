@@ -13,5 +13,7 @@ namespace LocadoraImoveisModels.Models.Interfaces
     public List<ResultUser> GetUsers();
     public ResultUser CreateUser(RegisterUser user);
     public LoggedUser? AuthenticateUser(LoginUser user);
+    public ResultUser? MakeAdmin(int idUser);
+    public ResultUser? RemoveAdmin(int idUser);
   }
 }

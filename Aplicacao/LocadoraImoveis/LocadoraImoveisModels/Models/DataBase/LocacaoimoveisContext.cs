@@ -21,6 +21,7 @@ namespace LocadoraImoveisModels.Models.DataBase
     public virtual DbSet<Properties> Properties { get; set; }
     public virtual DbSet<User> User { get; set; }
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       modelBuilder.UseCollation("utf8mb4_0900_ai_ci")

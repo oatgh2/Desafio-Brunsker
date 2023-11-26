@@ -1,4 +1,5 @@
-﻿using LocadoraImoveisModels.Models.DataBase;
+﻿using LocadoraImoveisModels.Models.Attributes;
+using LocadoraImoveisModels.Models.DataBase;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,7 +30,7 @@ namespace LocadoraImoveisModels.Models
     public string? Password { get; set; }
     [Required(ErrorMessage = "Campo Obrigatorio")]
     [StringLength(11, ErrorMessage = "Máximo de 11 caracteres")]
-    [MinLength(11, ErrorMessage = "Minimo de 11 caracteres")]
+    [CPFValidation("CPF Inválido")]
     public string? Cpf { get; set; }
 
     public User GetDatabaseUser()

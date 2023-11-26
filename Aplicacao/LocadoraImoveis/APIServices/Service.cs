@@ -7,29 +7,59 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace APIServices
 {
   public class Service
   {
 
-    public Service()
+    public Service(LocacaoimoveisContext dbContext, IHttpContextAccessor httpContext)
     {
-      Database = new LocacaoimoveisContext();
+      Database = dbContext;
+      HttpContextAccessor = httpContext;
     }
 
-    public Service(IHttpContextAccessor httpContextAccessor)
+    public T Create<T>(T Model) where T : class
     {
-      IEnumerable<Claim> userClaims = httpContextAccessor.HttpContext.User.Claims;
-      Database = new LocacaoimoveisContext();
-      if (userClaims!= null && userClaims.Count() > 0)
+      Database.Entry(Model).State = EntityState.Added;
+      Database.SaveChanges();
+
+      return Model;
+    }
+
+    public T Update<T>(T Model) where T : class
+    {
+      Database.Entry(Model).State = EntityState.Modified;
+      Database.SaveChanges();
+
+      return Model;
+    }
+
+    public T Delete<T>(T Model) where T : class
+    {
+      Database.Entry(Model).State = EntityState.Deleted;
+      Database.SaveChanges();
+
+      return Model;
+    }
+
+    protected IHttpContextAccessor HttpContextAccessor { get; }
+    protected LoggedUser? User
+    {
+      get
       {
-        LoggedUser? loggedUser = new LoggedUser(userClaims);
-        User = loggedUser;
+        IEnumerable<Claim> userClaims = HttpContextAccessor.HttpContext.User.Claims;
+        if (userClaims != null && userClaims.Count() > 0)
+        {
+          LoggedUser? loggedUser = JsonConvert.DeserializeObject<LoggedUser>(userClaims.FirstOrDefault()!.Value);
+          return loggedUser;
+        }
+        return null;
       }
     }
-
-    protected readonly LoggedUser? User;
-    protected readonly LocacaoimoveisContext Database;
+    protected LocacaoimoveisContext Database { get; private set; }
   }
 }

@@ -13,7 +13,6 @@ namespace LocadoraImoveisAPI.Controllers
 {
   [Authorize]
   [Route("User")]
-  [ApiController]
   public class UserController : CustomizedController
   {
     private readonly IUserService _userService;
@@ -25,11 +24,12 @@ namespace LocadoraImoveisAPI.Controllers
 
 
     [HttpGet]
-    [Route("/")]
+    [Route("Get")]
     public IActionResult GetUsers()
     {
       try
       {
+        LoggedUser? user = UserContext;
         List<ResultUser> users = _userService.GetUsers();
         return Ok(new Result(ResultType.Success.GetDescription(), users));
       }
@@ -40,9 +40,9 @@ namespace LocadoraImoveisAPI.Controllers
     }
 
     [HttpPost]
-    [Route("/")]
+    [Route("Register")]
     [AllowAnonymous]
-    public IActionResult RegisterUser(RegisterUser user)
+    public IActionResult RegisterUser([FromBody]RegisterUser user)
     {
       try
       {
@@ -56,6 +56,37 @@ namespace LocadoraImoveisAPI.Controllers
           .Select(x => new ValidationResult(x.Value!.Errors.First().ErrorMessage, new[] { x.Key })).ToList();
         return Ok(new ValidationErrorResult(validationErrors));
       } 
+      catch (ValidationErroException ex)
+      {
+        return Ok(new ValidationErrorResult(ex.Errors));
+      }
+      catch (Exception ex)
+      {
+        return Ok(new Result(ResultType.Error.ToString(), "Ocorreu um erro inesperado, tente novamente mais tarde!"));
+      }
+    }
+
+
+    [HttpPost]
+    [Route("Login")]
+    [AllowAnonymous]
+    public IActionResult Login([FromBody] LoginUser user)
+    {
+      try
+      {
+        if (ModelState.IsValid)
+        {
+          LoggedUser? result = _userService.AuthenticateUser(user);
+          if (result != null)
+            return Ok(new Result(ResultType.Success.GetDescription(), result));
+          else
+            return Ok(new Result(ResultType.Error.GetDescription(), "Usuário ou Senha incorreto(s)!"));
+        }
+        List<ValidationResult> validationErrors  = ModelState
+          .Where(x => x.Value!.Errors.Any())
+          .Select(x => new ValidationResult(x.Value!.Errors.First().ErrorMessage, new[] { x.Key })).ToList();
+        return Ok(new ValidationErrorResult(validationErrors));
+      }
       catch (ValidationErroException ex)
       {
         return Ok(new ValidationErrorResult(ex.Errors));

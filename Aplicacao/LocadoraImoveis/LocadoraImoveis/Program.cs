@@ -1,21 +1,33 @@
 using APIServices;
+using LocadoraImoveisModels.Models.DataBase;
 using LocadoraImoveisModels.Models.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+  x.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+});
+
+
+
+
+
+
+builder.Services.AddDbContext<LocacaoimoveisContext>(x =>
+{
+  x.UseMySql("server=localhost;port=3306;database=locacaoimoveis;uid=admin;password=@Esperto12;", new MySqlServerVersion(new Version(8, 2, 0)));
+});
 
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IUserService, UserService>();
-
-var app = builder.Build();
-
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -29,6 +41,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Jwt.SECURITY_KEY))
   }
   );
+
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseAuthentication();

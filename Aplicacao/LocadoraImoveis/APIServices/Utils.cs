@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using LocadoraImoveisModels.Models;
 using LocadoraImoveisModels.Models.DataBase;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace APIServices
 {
@@ -22,13 +23,12 @@ namespace APIServices
       SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SECURITY_KEY));
       SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+      string serializedUser = JsonConvert.SerializeObject(model);
+
       JwtSecurityToken token = new JwtSecurityToken(
         claims: new[]
         {
-          new Claim(ClaimTypes.Name, model.Name!),
-          new Claim("CPF", model.Cpf!),
-          new Claim("IsAdm", model.IsAdmin.ToString()),
-          new Claim("Id", model.Id.ToString())
+          new Claim("User", serializedUser),
         },
         signingCredentials: credentials
       );
@@ -65,7 +65,11 @@ namespace APIServices
       return sByte > 0;
     }
 
-    
+    public static ResultUser GetResultUser(this User user)
+    {
+      ResultUser resultUser = new ResultUser(user.Iduser, user.UserName, user.UserCpf, user.AdminUser.ToBoolean());
+      return resultUser;
+    }
 
     public static LoggedUser GetLoggedUser(this User user, string token)
     {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LocadoraImoveisModels.Models;
 using System.Security.Claims;
+using Newtonsoft.Json;
 
 namespace LocadoraImoveisAPI
 {
@@ -13,7 +14,7 @@ namespace LocadoraImoveisAPI
         IEnumerable<Claim> userClaims = HttpContext.User.Claims;
         if (userClaims != null && userClaims.Count() > 0)
         {
-          LoggedUser? loggedUser = new LoggedUser(userClaims);
+          LoggedUser? loggedUser = JsonConvert.DeserializeObject<LoggedUser>(userClaims.FirstOrDefault()!.Value);
           return loggedUser;
         }
         return null;
