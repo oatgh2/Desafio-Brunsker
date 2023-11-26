@@ -1,5 +1,6 @@
 ﻿using APIServices;
 using LocadoraImoveisModels.Models;
+using LocadoraImoveisModels.Models.Attributes;
 using LocadoraImoveisModels.Models.DataBase;
 using LocadoraImoveisModels.Models.Enums;
 using LocadoraImoveisModels.Models.Exceptions;
@@ -23,19 +24,84 @@ namespace LocadoraImoveisAPI.Controllers
     }
 
 
-    [HttpGet]
-    [Route("Get")]
-    public IActionResult GetUsers()
+    [HttpDelete]
+    [Route("RemoveAdmin/{idUser}")]
+    [RequireAdmin]
+    public IActionResult RemoveAdmin(int idUser)
     {
       try
       {
-        LoggedUser? user = UserContext;
-        List<ResultUser> users = _userService.GetUsers();
+        ResultUser? users = _userService.RemoveAdmin(idUser);
         return Ok(new Result(ResultType.Success.GetDescription(), users));
+      }
+      catch (ValidationErroException ex)
+      {
+        return Ok(new ValidationErrorResult(ex.Errors));
       }
       catch (Exception ex)
       {
         return Ok(new Result(ResultType.Error.GetDescription(), null));
+      }
+    }
+
+    [HttpPost]
+    [Route("MakeAdmin/{idUser}")]
+    [RequireAdmin]
+    public IActionResult MakeAdmin(int idUser)
+    {
+      try
+      {
+        ResultUser? users = _userService.MakeAdmin(idUser);
+        return Ok(new Result(ResultType.Success.GetDescription(), users));
+      }
+      catch (ValidationErroException ex)
+      {
+        return Ok(new ValidationErrorResult(ex.Errors));
+      }
+      catch (Exception ex)
+      {
+        return Ok(new Result(ResultType.Error.GetDescription(), null));
+      }
+    }
+
+
+    [HttpGet]
+    [Route("Get/{idUser}")]
+    [RequireAdmin]
+    public IActionResult GetUser(int idUser)
+    {
+      try
+      {
+        ResultUser? users = _userService.GetUser(idUser);
+        return Ok(new Result(ResultType.Success.GetDescription(), users));
+      }
+      catch (ValidationErroException ex)
+      {
+        return Ok(new ValidationErrorResult(ex.Errors));
+      }
+      catch (Exception ex)
+      {
+        return Ok(new Result(ResultType.Error.GetDescription(), "Ocorreu um erro, tente novamente mais tarde!"));
+      }
+    }
+
+    [HttpGet]
+    [Route("Get")]
+    [RequireAdmin]
+    public IActionResult GetUsers()
+    {
+      try
+      {
+        List<ResultUser> users = _userService.GetUsers();
+        return Ok(new Result(ResultType.Success.GetDescription(), users));
+      }
+      catch (ValidationErroException ex)
+      {
+        return Ok(new ValidationErrorResult(ex.Errors));
+      }
+      catch (Exception ex)
+      {
+        return Ok(new Result(ResultType.Error.GetDescription(), "Ocorreu um erro, tente novamente mais tarde!"));
       }
     }
 

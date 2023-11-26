@@ -32,14 +32,14 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
   .AddJwtBearer(options =>
-  options.TokenValidationParameters = new TokenValidationParameters()
-  {
-    ValidateIssuer = false,
-    ValidateAudience = false,
-    ValidateIssuerSigningKey = true,
-    ValidateLifetime = false,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Jwt.SECURITY_KEY))
-  }
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+      ValidateIssuer = false,
+      ValidateAudience = false,
+      ValidateIssuerSigningKey = true,
+      ValidateLifetime = false,
+      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Jwt.SECURITY_KEY))
+    }
   );
 
 WebApplication app = builder.Build();
